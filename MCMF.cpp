@@ -31,8 +31,8 @@ class MCMF
 		// a = 1st vertex, b= 2nd vertex, c = cost per unit, u = capacity
 		void addEdge(int a, int b, int c, int u)
 		{
-			Edge e1 = {b, c, u, 0, g[b].size()};// forward edge
-			Edge e2 = {a, -c, 0, 0, g[a].size()};// back edge(cost is negative on removing flow thru back edge, cost is corr. reduced). Initially cost is reduced
+			Edge e1 = {b, c, u, 0, (int)g[b].size()};// forward edge
+			Edge e2 = {a, -c, 0, 0, (int)g[a].size()};// back edge(cost is negative on removing flow thru back edge, cost is corr. reduced)
 			g[a].push_back(e1);
 			g[b].push_back(e2);
 		}
@@ -47,16 +47,16 @@ class MCMF
 			int *d = new int[n];
 			int *q = new int[n];
 			int qh, qt;
+			qh = 0, qt = 0;
 			while (true)
 			{
-				qh = 0, qt = 0;
 				for (int i = 0; i < n; i++) state[i] = 2, d[i] = inf;
 				fill(from, from + n, -1);// from[i]= state fom where i was reached
 				state[s] = 1;
 				// state[x]=0(not visited) state[x]=1(in Q) state[x]=2(visited)
 				q[qh++] = s;// add state src(0) to Q
 				d[s] = 0;// update distance of 1st vertex to 1
-				// SPFA algorithm for negative edges(worst case complexity: O(EV))
+				// Djikstra algorithm for negative edges(exponential complexity)
 				while (qh != qt)// Q becomes empty
 				{
 					int v = q[qt++];// pop current vertex
@@ -109,51 +109,31 @@ class MCMF
 			return cost;
 		} 
 };
+int n, m, q;
 
-struct Node
-{
-	int val;
-	int end;
-	int cost;
-	Node(int a, int b, int c)
-	{
-		val=a; end=b; cost=c;
-	}
-	bool operator<(const Node& x)const
-	{
-		if(a< x.a)
-			return true;
-		else if(a==x.a && end==0)
-			return true;
-		else
-			return false;
-	}
-};
-int n, k;
 int main()
 {
-	scanf("%d %d", &n, &k);
-	int i=0; multiset<Node> ends;
-	while(i< n)
+	scanf("%d %d %d", &n, &m, &q);// number of 1st,2nd column vertices in bipartite graph, number of queries
+	MCMF t(0, n+m+1, n + m+2);
+	for (int i = 1; i <= n; i++) 
 	{
-		int x,y,c; cin>>x>>y>>c;
-		ends.insert(Node(x,0,c)); ends.insert(Node(y,1,c));
-		i++;
+		t.addEdge(0, i, 0, 1);
 	}
-	MCMF t(0, ends.size()+1, ends.size() + 2);
-	for (auto it = ends.begin(), int i=1; it != ends.end(); it++, i++) 
+	for (int i = 1; i <= m; i++) 
 	{
-		if(it->end > 1)
-			t.addEdge(i-1, i, 0, k);
-		if(it->end==0)
-			t.addEdge(0, i, -it->second, 1);
-		else
-			t.addEdge(i,ends.size()+1, 0, 1);
+		t.addEdge(n+i, n+m+1, 0, 1);
 	}
-
+	for (int i = 1; i <= q; i++)
+	{
+		int x, y, z;
+		scanf("%d %d %d", &x, &y, &z);
+		t.addEdge(x, y, -z, 1);
+	}
 	// maximum flow, return minimum cost => t.minCostMaxFlow
 	printf("%d\n", -t.minCostMaxFlow());
 	return 0;
 }
+
+
 
 
