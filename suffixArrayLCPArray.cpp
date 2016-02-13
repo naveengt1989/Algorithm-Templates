@@ -15,7 +15,7 @@ bool compare(const tuple &a , const tuple &b)
 }
 
 // O(N(logN)^2)
-int * suffix_array(tuple t[] , char s[], int length )
+int * suffix_array(tuple t[] , string& s, int length )
 {
 	int pos = 0;
 	int *arr = (int*)calloc(length+9,sizeof(int));
@@ -60,31 +60,74 @@ int LCP(int i,int j,int n)
 		}
 	return res;
 }
-int LCParray(char s[],int p[],int n)
+int LCParray(string s,int p[],int n)
 {
 	int sum = 0;
 	for(int i = 1 ; i < n ; i++)
 		sum += (LCP(p[i-1],p[i],n));
 	return sum;
 }
+
+//  http://codeforces.com/blog/entry/12796
+//	LCP(i,j) = Min(LCP(i)...LCP(j-1));
+vector<int> kasai_lcparray(string& s, int* sa)
+{
+    int n=s.length(),k=0;
+    vector<int> lcp(n,0);
+    vector<int> rank(n,0);
+
+    for(int i=0; i<n; i++) rank[sa[i]]=i;
+
+    for(int i=0; i<n; i++, k?k--:0)
+    {
+        if(rank[i]==n-1) {k=0; continue;}
+        int j=sa[rank[i]+1];
+        while(i+k<n && j+k<n && s[i+k]==s[j+k]) k++;
+        lcp[rank[i]]=k;
+    }
+    return lcp;
+}
+//LCP(i,j) = Min(LCP(i)...LCP(j-1));
+
+void print_lcp(string& s, vector<int>& lcp, int *sa )
+{
+	for(int i=0; i< lcp.size(); i++)
+		cout<<s.substr(sa[i])<<" "<<lcp[i]<<"\n";
+}
+
+void print_suffixArray(string& s, int* sa)
+{
+	for(int i=0; i< s.length(); i++)
+		cout<<sa[i]<<" "<<s.substr(sa[i])<<"\n";
+
+}
+
 int main()
 {
 	int t;
 	scanf("%d",&t);
 	while(t--)
 	{
-		char s[50009];
-		scanf("%s",s);
-		int n = strlen(s);
+		string s;
+		cin>>s;
+		int n = s.length();
 		tuple t[n + 9];
-		int *p;
-		p = suffix_array(t,s,n);
+		int *sa;
+		sa = suffix_array(t,s,n);
+		// obtain lcp array
+		vector<int> lcp = kasai_lcparray(s,sa);
 		long long lcp_sum = 0,suffix_sum = 0;
-		lcp_sum = LCParray(s,p,n);
+		lcp_sum = LCParray(s,sa,n); 
+		//print_lcp(s, lcp, sa); 
+		print_suffixArray(s,sa);
+		
 		for(int i=0;i<n;i++)
-			suffix_sum += p[i];
+			suffix_sum += sa[i];
 		printf("%lld\n",(long long)n*n - lcp_sum - suffix_sum);
 		printf("%lld\n",(long long)n*(n+1)/2 - lcp_sum);
 	}
 	return 0;
 }
+
+
+
