@@ -36,7 +36,7 @@ class MCMF
 			g[a].push_back(e1);
 			g[b].push_back(e2);
 		}
-
+		// O(MaxFlow*E*V)
 		int minCostMaxFlow()
 		{
 			int flow = 0;
@@ -47,16 +47,17 @@ class MCMF
 			int *d = new int[n];
 			int *q = new int[n];
 			int qh, qt;
-			qh = 0, qt = 0;
+			
 			while (true)
 			{
+				qh = 0, qt = 0;
 				for (int i = 0; i < n; i++) state[i] = 2, d[i] = inf;
 				fill(from, from + n, -1);// from[i]= state fom where i was reached
 				state[s] = 1;
 				// state[x]=0(not visited) state[x]=1(in Q) state[x]=2(visited)
 				q[qh++] = s;// add state src(0) to Q
 				d[s] = 0;// update distance of 1st vertex to 1
-				// Djikstra algorithm for negative edges(exponential complexity)
+				// SPFA algorithm for negative edges(worst case complexity: O(EV))
 				while (qh != qt)// Q becomes empty
 				{
 					int v = q[qt++];// pop current vertex
