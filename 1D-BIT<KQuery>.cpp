@@ -57,7 +57,7 @@ struct Node
 			return false;
 	}
 };
-int tree[M];
+int tree[M+1];
 void update(int x, int val)
 {
 	while (x <= M)
