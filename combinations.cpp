@@ -32,7 +32,7 @@
 #include <utility> 
 #define N 7
 #define k 3
-#define P 41
+#define P 1000003
 
 using namespace std;
 // https://comeoncodeon.wordpress.com/2011/10/09/modular-multiplicative-inverse/
