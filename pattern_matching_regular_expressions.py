@@ -9,6 +9,8 @@ Created on May 23, 2016
 @author: naveengt1989
 '''
 # Reference: https://regex101.com/
+# http://docs.python.org/2/howto/regex.html
+# https://developers.google.com/edu/python/regular-expressions?csw=1
 import re
 
 parts = [
@@ -29,21 +31,24 @@ print res.group('second')
 
 
 
-# In[35]:
+# In[111]:
 
 import re
 #########################################################
+# []+?, []*?      => match only sufficient elements so as to get a match.
 pattern_greedy = '35[\w]+35'
 pattern_nongreedy = '35[\w]+?35'
-
+pattern_greedy_overlap = '(?=(35[\w]+35))'
+pattern_nongreedy_overlap = '(?=(35[\w]+?35))'
 data = "wdwdw35rrrgrdv35dededede35dcdcd35"
 res_greedy = re.findall(pattern_greedy,data)
 res_nongreedy = re.findall(pattern_nongreedy,data)
+res_greedy_overlap = re.findall(pattern_greedy_overlap,data)
+res_nongreedy_overlap = re.findall(pattern_nongreedy_overlap,data)
+print res_greedy, res_nongreedy, res_greedy_overlap, res_nongreedy_overlap
 
-print res_greedy, res_nongreedy
 
-
-# In[28]:
+# In[98]:
 
 import re
 #########################################################
@@ -80,9 +85,84 @@ print res_greedy
 print res_lazy
 
 
-# In[ ]:
+# In[4]:
+
+import re
+pattern = '\S+\.?$'
+data = '401 Southwest Parkway.'
+res = re.findall(pattern,data)
+print res
 
 
+# In[8]:
+
+import re
+pattern = '[^\{\}\|]+'
+data = '{1.01787e+08|1.019e+08}'
+res = re.findall(pattern,data)
+print res
+print float(res[0]), float(res[1])
+
+
+# In[2]:
+
+import re
+pattern = "(.*)friend(.*)"
+data = "naveen is a good friend to have"
+res = re.findall(pattern,data)
+print res
+
+
+# In[53]:
+
+# search for non alphanumeric characters
+import re
+pattern = "[^\w]"  # detect individually
+#pattern = "[^\w]+"
+data= "naveen$#"
+res = re.findall(pattern, data)
+print res
+
+
+# In[50]:
+
+import re
+#########################################################
+pattern_nonoverlap = '([\d]{4,4})'
+pattern_overlap = '(?=([\d]{4,4}))'
+# ?=   => to make RE copture overlapping patterns
+data = "1234567"
+res_nonoverlap = re.findall(pattern_nonoverlap,data)
+res_overlap = re.findall(pattern_overlap,data)
+print res_nonoverlap
+print res_overlap
+
+
+# In[47]:
+
+import re
+#########################################################
+# validate IP address
+# ?:   => to make brackets non-capturing
+pattern_ip = '((?:(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}(?:[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))'
+
+data = "192.168.1.2, 192.168.255.255,1.2.3.4,1.2.3,1.2.0.0,10.0.0.0"
+res = re.findall(pattern_ip,data)
+
+print res
+
+
+# In[109]:
+
+import re
+#########################################################
+greedypattern = '[\d]+\d'
+lazypattern = '[\d]+?\d'
+# ?=   => to make RE copture overlapping patterns
+data = "1234"
+res_greedy = re.findall(greedypattern,data)
+res_lazy = re.findall(lazypattern,data)
+print res_greedy, res_lazy
 
 
 # In[ ]:
