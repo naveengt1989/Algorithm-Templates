@@ -58,15 +58,16 @@ struct Node
 	}
 };
 int tree[M+1];
-void update(int x, int val)
+// index => idx + 1
+void update(int idx, int val)
 {
-	while (x <= M)
+	while (idx <= M)
 	{
-		tree[x] += val;
-		x += (x & -x); 
+		tree[idx] += val;
+		idx += (idx & -idx); 
 	}
 }
-
+// index => idx + 1
 int read(int idx)
 {
 	int sum = 0;
